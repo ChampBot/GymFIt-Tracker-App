@@ -1,11 +1,11 @@
 import React from 'react';
 
-// --- MOCK DATA & CONFIG ---
+//MOCK DATA & CONFIG 
 const exercisesByBodyPart = {
     'Chest': {
         'Compound': [
             { id: 'barbell_bench_press_flat', name: 'Barbell Bench Press (Flat)', type: 'reps', image: '/images/Barbell Bench flat.gif' },
-            { id: 'dumbbell_bench_press_flat', name: 'Dumbbell Bench Press (Flat)', type: 'reps', image: '/images/flat dumbbell bench press.gif' },
+            { id: 'dumbbell_bench_press_flat', name: 'Dumbbell Bench Press (Flat)', type: 'reps', image: '/images/Flat_Dumbbell_Bench_Press.gif' },
             { id: 'push_ups', name: 'Push-Ups', type: 'reps', image: '/images/Push ups.gif' },
             { id: 'dips_chest', name: 'Dips (Chest-leaning)', type: 'reps', image: '/images/Dips (Chest-leaning).gif' },
             { id: 'machine_chest_press', name: 'Machine Chest Press', type: 'reps', image: '/images/Machine Chest Press.gif' },
@@ -19,7 +19,7 @@ const exercisesByBodyPart = {
     'Shoulders': {
         'Compound': [
             { id: 'overhead_press_barbell', name: 'Overhead Press (Barbell)', type: 'reps', image: '/images/Overhead Press (Barbell).gif' },
-            { id: 'arnold_press', name: 'Arnold Press', type: 'reps', image: '/images/arnold press.gif' },
+            { id: 'arnold_press', name: 'Arnold Press', type: 'reps', image: '/images/Arnold_Press.gif' },
             { id: 'push_press', name: 'Push Press', type: 'reps', image: '/images/Push Press.gif' },
         ],
         'Isolation': [
@@ -53,7 +53,7 @@ const exercisesByBodyPart = {
             { id: 'dumbbell_curl_hammer', name: 'Hammer Curl (Dumbbell)', type: 'reps', image: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Hammer-Curl.gif' },
             { id: 'concentration_curl', name: 'Concentration Curl', type: 'reps', image: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Concentration-Curl.gif' },
             { id: 'preacher_curl_machine', name: 'Preacher Curl (Machine)', type: 'reps', image: '/images/Preacher Curl (Machine).gif' },
-            { id: 'incline_dumbbell_curl', name: 'Incline Dumbbell Curl', type: 'reps', image: '/images/incline dumbbell curl.gif' },
+            { id: 'incline_dumbbell_curl', name: 'Incline Dumbbell Curl', type: 'reps', image: '/images/Incline_Dumbbell_Curl.gif' },
         ]
     },
     'Triceps': {
@@ -69,17 +69,17 @@ const exercisesByBodyPart = {
     },
     'Legs': {
         'Compound': [
-            { id: 'squat_back', name: 'Squat (Back)', type: 'reps', image: '/images/back squat.gif' },
-            { id: 'front_squat', name: 'Front Squat', type: 'reps', image: '/images/front squat.gif' },
-            { id: 'leg_press', name: 'Leg Press', type: 'reps', image: '/images/leg press.gif' },
-            { id: 'romanian_deadlift', name: 'Romanian Deadlift', type: 'reps', image: '/images/romanian deadlift.gif' },
+            { id: 'squat_back', name: 'Squat (Back)', type: 'reps', image: '/images/Squat_Back.gif' },
+            { id: 'front_squat', name: 'Front Squat', type: 'reps', image: '/images/Front_Squat.gif' },
+            { id: 'leg_press', name: 'Leg Press', type: 'reps', image: '/images/Leg_Press.gif' },
+            { id: 'romanian_deadlift', name: 'Romanian Deadlift', type: 'reps', image: '/images/Romanian_Deadlift.gif' },
             { id: 'lunges_walking', name: 'Walking Lunges (Dumbbell)', type: 'reps', image: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Lunge.gif' },
         ],
         'Isolation': [
-            { id: 'leg_extension', name: 'Leg Extension', type: 'reps', image: '/images/leg extension.gif' },
+            { id: 'leg_extension', name: 'Leg Extension', type: 'reps', image: '/images/Leg_Extension.gif' },
             { id: 'hamstring_curl_lying', name: 'Lying Hamstring Curl', type: 'reps', image: '/images/Lying Hamstring Curl.gif' },
-            { id: 'calf_raises_standing', name: 'Standing Calf Raises', type: 'reps', image: '/images/standing calf raise.gif' },
-            { id: 'hip_thrusts', name: 'Hip Thrusts (Barbell)', type: 'reps', image: '/images/hip thrust.gif' },
+            { id: 'calf_raises_standing', name: 'Standing Calf Raises', type: 'reps', image: '/images/Standing_Calf_Raise.gif' },
+            { id: 'hip_thrusts', name: 'Hip Thrusts (Barbell)', type: 'reps', image: '/images/Hip_Thrust.gif' },
         ]
     },
     'Core': {
@@ -103,7 +103,7 @@ const workoutPlans = {
         type: 'ppl',
         exercises: [
             { name: 'Incline Barbell Bench Press', sets: 4, reps: '6-8', rest: '2-3 min', image: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Incline-Barbell-Bench-Press.gif' },
-            { name: 'Flat Dumbbell Bench Press', sets: 3, reps: '8-10', rest: '2 min', image: '/images/flat dumbbell bench press.gif' },
+            { name: 'Flat Dumbbell Bench Press', sets: 3, reps: '8-10', rest: '2 min', image: '/images/Flat_Dumbbell_Bench_Press.gif' },
             { name: 'Cable Fly (Low-to-High)', sets: 3, reps: '10-12', rest: '90 sec', image: '/images/Cable Fly (Low-to-High).gif' },
             { name: 'Overhead Press (Barbell or Dumbbell)', sets: 3, reps: '6-8', rest: '2 min', image: '/images/Overhead Press (Barbell or Dumbbell).gif' },
             { name: 'Lateral Raises', sets: 3, reps: '12-15', rest: '60-90 sec', image: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Lateral-Raise.gif' },
@@ -120,20 +120,20 @@ const workoutPlans = {
             { name: 'One-Arm Dumbbell Row', sets: 3, reps: '8-10/side', rest: '90 sec', image: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Row.gif' },
             { name: 'Face Pulls', sets: 3, reps: '12-15', rest: '60-90 sec', image: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Face-Pull.gif' },
             { name: 'Barbell Curl (EZ Bar or Straight)', sets: 3, reps: '8-10', rest: '90 sec', image: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Curl.gif' },
-            { name: 'Incline Dumbbell Curl', sets: 3, reps: '10-12', rest: '90 sec', image: '/images/incline dumbbell curl.gif' },
+            { name: 'Incline Dumbbell Curl', sets: 3, reps: '10-12', rest: '90 sec', image: '/images/Incline_Dumbbell_Curl.gif' },
         ]
     },
     'leg_day_ppl': {
         name: 'Leg Day (Quads, Hamstrings, Glutes, Calves)',
         type: 'ppl',
         exercises: [
-            { name: 'Back Squat', sets: 4, reps: '6-8', rest: '2-3 min', image: '/images/back squat.gif' },
-            { name: 'Romanian Deadlift', sets: 4, reps: '8-10', rest: '2-3 min', image: '/images/romanian deadlift.gif' },
+            { name: 'Back Squat', sets: 4, reps: '6-8', rest: '2-3 min', image: '/images/Squat_Back.gif' },
+            { name: 'Romanian Deadlift', sets: 4, reps: '8-10', rest: '2-3 min', image: '/images/Romanian_Deadlift.gif' },
             { name: 'Walking Lunges', sets: 3, reps: '10 steps/leg', rest: '90 sec', image: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Lunge.gif' },
-            { name: 'Leg Press', sets: 3, reps: '10-12', rest: '2 min', image: '/images/leg press.gif' },
+            { name: 'Leg Press', sets: 3, reps: '10-12', rest: '2 min', image: '/images/Leg_Press.gif' },
             { name: 'Leg Curl (Seated or Lying)', sets: 3, reps: '10-12', rest: '90 sec', image: '/images/Leg Curl (Seated or Lying).gif' },
-            { name: 'Standing Calf Raise', sets: 4, reps: '12-15', rest: '60-90 sec', image: '/images/standing calf raise.gif' },
-            { name: 'Hip Thrust', sets: 3, reps: '8-10', rest: '2 min', image: '/images/hip thrust.gif' },
+            { name: 'Standing Calf Raise', sets: 4, reps: '12-15', rest: '60-90 sec', image: '/images/Standing_Calf_Raise.gif' },
+            { name: 'Hip Thrust', sets: 3, reps: '8-10', rest: '2 min', image: '/images/Hip_Thrust.gif' },
         ]
     },
     'chest_shoulders_split': {
@@ -141,13 +141,13 @@ const workoutPlans = {
         type: 'split',
         exercises: [
             { name: "Incline Barbell Bench Press", desc: "Targets the upper chest and builds overall pressing strength.", image: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Incline-Barbell-Bench-Press.gif' },
-            { name: "Flat Dumbbell Bench Press", desc: "Works the mid chest with a fuller range of motion than barbell.", image: '/images/flat dumbbell bench press.gif' },
+            { name: "Flat Dumbbell Bench Press", desc: "Works the mid chest with a fuller range of motion than barbell.", image: '/images/Flat_Dumbbell_Bench_Press.gif' },
             { name: "Cable Fly (Low-to-High)", desc: "Isolates and shapes the upper/inner chest.", image: '/images/Cable Fly (Low-to-High).gif' },
             { name: "Dips (Chest-leaning)", desc: "Emphasizes the lower chest and outer sweep when leaning forward.", image: '/images/Dips (Chest-leaning).gif' },
             { name: "Overhead Press (Barbell or Dumbbell)", desc: "Primary mass builder for front and side delts.", image: '/images/Overhead Press (Barbell or Dumbbell).gif' },
             { name: "Lateral Raises (Dumbbell or Cable)", desc: "Isolates the side delts for shoulder width.", image: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Lateral-Raise.gif' },
             { name: "Face Pulls (Cable Rope)", desc: "Strengthens rear delts and improves shoulder joint health.", image: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Face-Pull.gif' },
-            { name: "Arnold Press", desc: "Hits all three deltoid heads with an extended range of motion.", image: '/images/arnold press.gif' },
+            { name: "Arnold Press", desc: "Hits all three deltoid heads with an extended range of motion.", image: '/images/Arnold_Press.gif' },
         ]
     },
     'back_split': {
@@ -166,15 +166,15 @@ const workoutPlans = {
         name: 'Legs Focus',
         type: 'split',
         exercises: [
-            { name: "Back Squat", desc: "King of lower body lifts, builds overall leg mass and strength.", image: '/images/back squat.gif' },
-            { name: "Front Squat", desc: "Emphasizes the quads and core stability.", image: '/images/front squat.gif' },
-            { name: "Romanian Deadlift", desc: "Stretches and strengthens hamstrings and glutes.", image: '/images/romanian deadlift.gif' },
+            { name: "Back Squat", desc: "King of lower body lifts, builds overall leg mass and strength.", image: '/images/Squat_Back.gif' },
+            { name: "Front Squat", desc: "Emphasizes the quads and core stability.", image: '/images/Front_Squat.gif' },
+            { name: "Romanian Deadlift", desc: "Stretches and strengthens hamstrings and glutes.", image: '/images/Romanian_Deadlift.gif' },
             { name: "Walking Lunges", desc: "Works quads, glutes, and balance at the same time.", image: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Lunge.gif' },
-            { name: "Leg Press", desc: "Heavy compound movement for quad thickness.", image: '/images/leg press.gif' },
-            { name: "Leg Extension", desc: "Isolates the quads for definition.", image: '/images/leg extension.gif' },
+            { name: "Leg Press", desc: "Heavy compound movement for quad thickness.", image: '/images/Leg_Press.gif' },
+            { name: "Leg Extension", desc: "Isolates the quads for definition.", image: '/images/Leg_Extension.gif' },
             { name: "Seated or Lying Leg Curl", desc: "Isolates the hamstrings for size and strength.", image: '/images/Leg Curl (Seated or Lying).gif' },
-            { name: "Standing Calf Raise", desc: "Builds calf size and ankle strength.", image: '/images/standing calf raise.gif' },
-            { name: "Hip Thrust", desc: "Targets glutes for power and shape.", image: '/images/hip thrust.gif' },
+            { name: "Standing Calf Raise", desc: "Builds calf size and ankle strength.", image: '/images/Standing_Calf_Raise.gif' },
+            { name: "Hip Thrust", desc: "Targets glutes for power and shape.", image: '/images/Hip_Thrust.gif' },
         ]
     },
     'arms_split': {
@@ -183,7 +183,7 @@ const workoutPlans = {
         exercises: [
              { name: "Barbell Curl (Straight or EZ Bar)", desc: "Builds overall biceps mass and strength.", image: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Barbell-Curl.gif' },
              { name: "Dumbbell Curl (Standard or Hammer Grip)", desc: "Adds peak and forearm thickness.", image: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Hammer-Curl.gif' },
-             { name: "Incline Dumbbell Curl", desc: "Stretches the biceps for greater muscle activation.", image: '/images/incline dumbbell curl.gif' },
+             { name: "Incline Dumbbell Curl", desc: "Stretches the biceps for greater muscle activation.", image: '/images/Incline_Dumbbell_Curl.gif' },
              { name: "Concentration Curl", desc: "Isolates the biceps for a focused contraction.", image: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Concentration-Curl.gif' },
              { name: "Close-Grip Bench Press", desc: "Heavy compound lift that adds triceps size and pressing strength.", image: 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Close-Grip-Bench-Press.gif' },
              { name: "Overhead Triceps Extension (Dumbbell or Cable Rope)", desc: "Stretches and builds the long head of the triceps.", image: '/images/Overhead Triceps Extension.gif' },
@@ -195,10 +195,10 @@ const workoutPlans = {
 
 const bodyPartCategories = Object.keys(exercisesByBodyPart);
 
-// --- REACT COMPONENTS ---
+//REACT COMPONENTS
 
 function App() {
-    // --- STATE MANAGEMENT ---
+    // STATE MANAGEMENT
     const [selectedCategory, setSelectedCategory] = React.useState(bodyPartCategories[0]);
     const [selectedMovementType, setSelectedMovementType] = React.useState(Object.keys(exercisesByBodyPart[bodyPartCategories[0]])[0]);
     const [selectedExercise, setSelectedExercise] = React.useState(exercisesByBodyPart[bodyPartCategories[0]][Object.keys(exercisesByBodyPart[bodyPartCategories[0]])[0]][0]);
@@ -206,7 +206,7 @@ function App() {
     const [workoutLog, setWorkoutLog] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(false);
 
-    // --- EVENT HANDLERS ---
+    //  EVENT HANDLERS 
     const handleCategoryChange = (event) => {
         const newCategory = event.target.value;
         setSelectedCategory(newCategory);
@@ -243,7 +243,7 @@ function App() {
         setWorkoutLog(prevLogs => [newLogEntry, ...prevLogs]);
     };
 
-    // --- RENDER ---
+    //  RENDER 
     return (
         <div className="bg-gray-100 text-gray-800 min-h-screen font-['Inter'] p-4 sm:p-6 lg:p-8">
             <div className="max-w-7xl mx-auto">
