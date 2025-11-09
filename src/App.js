@@ -1,7 +1,7 @@
 import React from 'react';
 import { supabase, isSupabaseConfigured } from './lib/supabase';
 
-//MOCK DATA & CONFIG 
+// Exercise data and workout plans 
 const exercisesByBodyPart = {
     'Chest': {
         'Compound': [
@@ -196,10 +196,8 @@ const workoutPlans = {
 
 const bodyPartCategories = Object.keys(exercisesByBodyPart);
 
-//REACT COMPONENTS
 
 function App() {
-    // STATE MANAGEMENT
     const [selectedCategory, setSelectedCategory] = React.useState(bodyPartCategories[0]);
     const [selectedMovementType, setSelectedMovementType] = React.useState(Object.keys(exercisesByBodyPart[bodyPartCategories[0]])[0]);
     const [selectedExercise, setSelectedExercise] = React.useState(exercisesByBodyPart[bodyPartCategories[0]][Object.keys(exercisesByBodyPart[bodyPartCategories[0]])[0]][0]);
@@ -208,10 +206,9 @@ function App() {
     const [isLoading, setIsLoading] = React.useState(false);
     const [error, setError] = React.useState(null);
 
-    // Load workout logs from Supabase
     const loadWorkoutLogs = React.useCallback(async () => {
         if (!isSupabaseConfigured() || !supabase) {
-            setError('Supabase is not configured. Please set up your environment variables.');
+            setError('Supabase is not configured. Check your environment variables.');
             setIsLoading(false);
             return;
         }
@@ -227,7 +224,6 @@ function App() {
 
             if (fetchError) throw fetchError;
 
-            // Transform data to match the expected format
             const transformedData = data.map(log => ({
                 id: log.id,
                 exerciseId: log.exercise_id,
@@ -244,18 +240,70 @@ function App() {
             setWorkoutLog(transformedData);
         } catch (err) {
             console.error('Error loading workout logs:', err);
-            setError(err.message || 'Failed to load workout logs. Make sure your Supabase database is set up correctly.');
+            setError(err.message || 'Failed to load workout logs');
         } finally {
             setIsLoading(false);
         }
     }, []);
 
-    // Load workout logs on component mount
     React.useEffect(() => {
         loadWorkoutLogs();
     }, [loadWorkoutLogs]);
 
-    //  EVENT HANDLERS 
+    const deleteWorkoutLog = React.useCallback(async (logId) => {
+        if (!isSupabaseConfigured() || !supabase) {
+            alert('Supabase is not configured. Check your environment variables.');
+            return;
+        }
+
+        setIsLoading(true);
+        setError(null);
+        try {
+            const { error: deleteError } = await supabase
+                .from('workout_logs')
+                .delete()
+                .eq('id', logId);
+
+            if (deleteError) throw deleteError;
+
+            setWorkoutLog(prevLogs => prevLogs.filter(log => log.id !== logId));
+        } catch (err) {
+            console.error('Error deleting workout log:', err);
+            setError(err.message || 'Failed to delete workout log');
+            alert(`Failed to delete workout log: ${err.message || 'Unknown error'}`);
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    const clearWorkoutLogs = React.useCallback(async () => {
+        if (!isSupabaseConfigured() || !supabase) {
+            alert('Supabase is not configured. Check your environment variables.');
+            return;
+        }
+
+        const confirmed = window.confirm('Delete all workout logs? This cannot be undone.');
+        if (!confirmed) return;
+
+        setIsLoading(true);
+        setError(null);
+        try {
+            const { error: deleteError } = await supabase
+                .from('workout_logs')
+                .delete()
+                .gte('created_at', '1970-01-01T00:00:00Z');
+
+            if (deleteError) throw deleteError;
+            setWorkoutLog([]);
+        } catch (err) {
+            console.error('Error clearing workout logs:', err);
+            setError(err.message || 'Failed to clear workout logs');
+            alert(`Failed to clear workout logs: ${err.message || 'Unknown error'}`);
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
     const handleCategoryChange = (event) => {
         const newCategory = event.target.value;
         setSelectedCategory(newCategory);
@@ -281,14 +329,13 @@ function App() {
 
     const handleLogWorkout = async (logData) => {
         if (!isSupabaseConfigured() || !supabase) {
-            alert('Supabase is not configured. Please set up your environment variables. See README.md for instructions.');
+            alert('Supabase is not configured. Check your environment variables.');
             return;
         }
 
         setIsLoading(true);
         setError(null);
         try {
-            // Prepare data for Supabase
             const workoutData = {
                 exercise_id: selectedExercise.id,
                 exercise_name: selectedExercise.name,
@@ -300,7 +347,6 @@ function App() {
                 duration: logData.type === 'timed' ? logData.duration : null,
             };
 
-            // Insert into Supabase
             const { data, error: insertError } = await supabase
                 .from('workout_logs')
                 .insert([workoutData])
@@ -309,7 +355,6 @@ function App() {
 
             if (insertError) throw insertError;
 
-            // Transform the response to match expected format
             const newLogEntry = {
                 id: data.id,
                 exerciseId: data.exercise_id,
@@ -323,19 +368,16 @@ function App() {
                 timestamp: new Date(data.timestamp),
             };
 
-            // Update local state
             setWorkoutLog(prevLogs => [newLogEntry, ...prevLogs]);
         } catch (err) {
             console.error('Error saving workout log:', err);
-            const errorMessage = err.message || 'Failed to save workout log. Make sure your Supabase database is set up correctly.';
-            setError(errorMessage);
-            alert(`Failed to save workout log: ${errorMessage}`);
+            setError(err.message || 'Failed to save workout log');
+            alert(`Failed to save workout log: ${err.message || 'Unknown error'}`);
         } finally {
             setIsLoading(false);
         }
     };
 
-    //  RENDER 
     return (
         <div className="bg-gray-100 text-gray-800 min-h-screen font-['Inter'] p-4 sm:p-6 lg:p-8">
             <div className="max-w-7xl mx-auto">
@@ -362,7 +404,14 @@ function App() {
                         />
                     </div>
                     <div className="bg-white p-6 rounded-2xl shadow-lg">
-                        <WorkoutLog logs={workoutLog} isLoading={isLoading} error={error} onRefresh={loadWorkoutLogs} />
+                        <WorkoutLog 
+                            logs={workoutLog} 
+                            isLoading={isLoading} 
+                            error={error} 
+                            onRefresh={loadWorkoutLogs}
+                            onClear={clearWorkoutLogs}
+                            onDelete={deleteWorkoutLog}
+                        />
                     </div>
                 </main>
             </div>
@@ -569,7 +618,7 @@ function RepCounter({ onLogWorkout }) {
     );
 }
 
-function WorkoutLog({ logs, isLoading, error, onRefresh }) {
+function WorkoutLog({ logs, isLoading, error, onRefresh, onClear, onDelete }) {
     const formatTimestamp = (ts) => ts ? ts.toLocaleString() : 'Just now';
 
     return (
@@ -579,16 +628,30 @@ function WorkoutLog({ logs, isLoading, error, onRefresh }) {
                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                     Workout History
                 </h2>
-                <button
-                    onClick={onRefresh}
-                    disabled={isLoading}
-                    className="p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    title="Refresh workout logs"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={isLoading ? 'animate-spin' : ''}>
-                        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
-                    </svg>
-                </button>
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={onRefresh}
+                        disabled={isLoading}
+                        className="p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Refresh workout logs"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={isLoading ? 'animate-spin' : ''}>
+                            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                        </svg>
+                    </button>
+                    {logs.length > 0 && (
+                        <button
+                            onClick={onClear}
+                            disabled={isLoading}
+                            className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            title="Clear all workout logs"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                        </button>
+                    )}
+                </div>
             </div>
             {error && (
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
@@ -609,15 +672,29 @@ function WorkoutLog({ logs, isLoading, error, onRefresh }) {
             )}
             <div className="space-y-3 max-h-[70vh] overflow-y-auto pr-2">
                 {logs.map(log => (
-                    <div key={log.id} className="bg-gray-50 border border-gray-200 p-4 rounded-lg transition-all hover:shadow-md hover:border-blue-300">
-                        <p className="font-bold text-blue-600">{log.exerciseName}</p>
-                        <p className="text-sm text-gray-600">{log.category} <span className="text-gray-400">({log.movementType})</span></p>
-                        {log.type === 'timed' ? (
-                            <p className="text-gray-800 mt-1">Duration: {log.duration} seconds</p>
-                        ) : (
-                            <p className="text-gray-800 mt-1">Reps: {log.reps} {log.weight > 0 ? `@ ${log.weight} kg` : ''}</p>
-                        )}
-                        <p className="text-xs text-gray-400 mt-2">{formatTimestamp(log.timestamp)}</p>
+                    <div key={log.id} className="bg-gray-50 border border-gray-200 p-4 rounded-lg transition-all hover:shadow-md hover:border-blue-300 group">
+                        <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                                <p className="font-bold text-blue-600">{log.exerciseName}</p>
+                                <p className="text-sm text-gray-600">{log.category} <span className="text-gray-400">({log.movementType})</span></p>
+                                {log.type === 'timed' ? (
+                                    <p className="text-gray-800 mt-1">Duration: {log.duration} seconds</p>
+                                ) : (
+                                    <p className="text-gray-800 mt-1">Reps: {log.reps} {log.weight > 0 ? `@ ${log.weight} kg` : ''}</p>
+                                )}
+                                <p className="text-xs text-gray-400 mt-2">{formatTimestamp(log.timestamp)}</p>
+                            </div>
+                            <button
+                                onClick={() => onDelete(log.id)}
+                                disabled={isLoading}
+                                className="ml-3 p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                                title="Delete this workout log"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 ))}
             </div>
