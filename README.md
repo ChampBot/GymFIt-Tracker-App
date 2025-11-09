@@ -1,4 +1,68 @@
-# Getting Started with Create React App
+# GymFit Tracker
+
+A workout tracking application built with React and Supabase. Log your exercises, track sets, reps, and weights, and follow structured workout plans.
+
+## Features
+
+- 📊 Track workouts with sets, reps, and weights
+- ⏱️ Timer functionality for timed exercises (planks, etc.)
+- 📋 Pre-built workout plans (Push/Pull/Legs, body part splits)
+- 💾 Persistent storage with Supabase
+- 📱 Responsive design
+
+## Supabase Setup
+
+This project uses Supabase for database storage. Follow these steps to set it up:
+
+### 1. Install Dependencies
+
+```bash
+npm install
+```
+
+### 2. Set Up Supabase Database
+
+1. Go to your [Supabase Dashboard](https://app.supabase.com/)
+2. Create a new project or select an existing one
+3. Go to the SQL Editor
+4. Copy and run the SQL from `supabase-schema.sql` to create the `workout_logs` table
+
+### 3. Configure Environment Variables
+
+1. Get your Supabase URL and Anon Key from your Supabase project settings (Settings > API)
+2. Create a `.env` file in the root directory:
+
+```env
+REACT_APP_SUPABASE_URL=your_supabase_project_url
+REACT_APP_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+3. **For Vercel Deployment:**
+   - Go to your Vercel project settings
+   - Navigate to Environment Variables
+   - Add the same variables:
+     - `REACT_APP_SUPABASE_URL`
+     - `REACT_APP_SUPABASE_ANON_KEY`
+   - Redeploy your application
+
+### 4. Run the Application
+
+```bash
+npm start
+```
+
+The app will open at [http://localhost:3000](http://localhost:3000)
+
+## Database Schema
+
+The `workout_logs` table stores:
+- Exercise information (ID, name, category, movement type)
+- Workout data (reps, weight, duration)
+- Timestamps
+
+See `supabase-schema.sql` for the complete schema.
+
+## Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

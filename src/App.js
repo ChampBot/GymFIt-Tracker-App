@@ -1,4 +1,5 @@
 import React from 'react';
+import { supabase, isSupabaseConfigured } from './lib/supabase';
 
 //MOCK DATA & CONFIG 
 const exercisesByBodyPart = {
@@ -205,6 +206,54 @@ function App() {
     
     const [workoutLog, setWorkoutLog] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(false);
+    const [error, setError] = React.useState(null);
+
+    // Load workout logs from Supabase
+    const loadWorkoutLogs = React.useCallback(async () => {
+        if (!isSupabaseConfigured() || !supabase) {
+            setError('Supabase is not configured. Please set up your environment variables.');
+            setIsLoading(false);
+            return;
+        }
+
+        setIsLoading(true);
+        setError(null);
+        try {
+            const { data, error: fetchError } = await supabase
+                .from('workout_logs')
+                .select('*')
+                .order('timestamp', { ascending: false })
+                .limit(100);
+
+            if (fetchError) throw fetchError;
+
+            // Transform data to match the expected format
+            const transformedData = data.map(log => ({
+                id: log.id,
+                exerciseId: log.exercise_id,
+                exerciseName: log.exercise_name,
+                category: log.category,
+                movementType: log.movement_type,
+                type: log.type,
+                reps: log.reps,
+                weight: log.weight,
+                duration: log.duration,
+                timestamp: new Date(log.timestamp),
+            }));
+
+            setWorkoutLog(transformedData);
+        } catch (err) {
+            console.error('Error loading workout logs:', err);
+            setError(err.message || 'Failed to load workout logs. Make sure your Supabase database is set up correctly.');
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    // Load workout logs on component mount
+    React.useEffect(() => {
+        loadWorkoutLogs();
+    }, [loadWorkoutLogs]);
 
     //  EVENT HANDLERS 
     const handleCategoryChange = (event) => {
@@ -230,17 +279,60 @@ function App() {
         setSelectedExercise(exercise);
     };
 
-    const handleLogWorkout = (logData) => {
-        const newLogEntry = {
-            ...logData,
-            id: new Date().toISOString(),
-            exerciseId: selectedExercise.id,
-            exerciseName: selectedExercise.name,
-            category: selectedCategory,
-            movementType: selectedMovementType,
-            timestamp: new Date(),
-        };
-        setWorkoutLog(prevLogs => [newLogEntry, ...prevLogs]);
+    const handleLogWorkout = async (logData) => {
+        if (!isSupabaseConfigured() || !supabase) {
+            alert('Supabase is not configured. Please set up your environment variables. See README.md for instructions.');
+            return;
+        }
+
+        setIsLoading(true);
+        setError(null);
+        try {
+            // Prepare data for Supabase
+            const workoutData = {
+                exercise_id: selectedExercise.id,
+                exercise_name: selectedExercise.name,
+                category: selectedCategory,
+                movement_type: selectedMovementType,
+                type: logData.type,
+                reps: logData.type === 'reps' ? logData.reps : null,
+                weight: logData.type === 'reps' ? (logData.weight || 0) : null,
+                duration: logData.type === 'timed' ? logData.duration : null,
+            };
+
+            // Insert into Supabase
+            const { data, error: insertError } = await supabase
+                .from('workout_logs')
+                .insert([workoutData])
+                .select()
+                .single();
+
+            if (insertError) throw insertError;
+
+            // Transform the response to match expected format
+            const newLogEntry = {
+                id: data.id,
+                exerciseId: data.exercise_id,
+                exerciseName: data.exercise_name,
+                category: data.category,
+                movementType: data.movement_type,
+                type: data.type,
+                reps: data.reps,
+                weight: data.weight,
+                duration: data.duration,
+                timestamp: new Date(data.timestamp),
+            };
+
+            // Update local state
+            setWorkoutLog(prevLogs => [newLogEntry, ...prevLogs]);
+        } catch (err) {
+            console.error('Error saving workout log:', err);
+            const errorMessage = err.message || 'Failed to save workout log. Make sure your Supabase database is set up correctly.';
+            setError(errorMessage);
+            alert(`Failed to save workout log: ${errorMessage}`);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     //  RENDER 
@@ -270,7 +362,7 @@ function App() {
                         />
                     </div>
                     <div className="bg-white p-6 rounded-2xl shadow-lg">
-                        <WorkoutLog logs={workoutLog} isLoading={isLoading} />
+                        <WorkoutLog logs={workoutLog} isLoading={isLoading} error={error} onRefresh={loadWorkoutLogs} />
                     </div>
                 </main>
             </div>
@@ -477,18 +569,44 @@ function RepCounter({ onLogWorkout }) {
     );
 }
 
-function WorkoutLog({ logs, isLoading, error }) {
+function WorkoutLog({ logs, isLoading, error, onRefresh }) {
     const formatTimestamp = (ts) => ts ? ts.toLocaleString() : 'Just now';
 
     return (
         <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                Workout History
-            </h2>
-            {error && <p className="text-red-500">{error}</p>}
-            {isLoading && <p className="text-gray-500">Loading history...</p>}
-            {!isLoading && logs.length === 0 && <p className="text-gray-500">No workouts logged yet!</p>}
+            <div className="flex items-center justify-between mb-6">
+                <h2 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                    Workout History
+                </h2>
+                <button
+                    onClick={onRefresh}
+                    disabled={isLoading}
+                    className="p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Refresh workout logs"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={isLoading ? 'animate-spin' : ''}>
+                        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                    </svg>
+                </button>
+            </div>
+            {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+                    <p className="font-semibold">Error loading workouts</p>
+                    <p className="text-sm">{error}</p>
+                </div>
+            )}
+            {isLoading && logs.length === 0 && (
+                <div className="text-center py-8">
+                    <p className="text-gray-500">Loading workout history...</p>
+                </div>
+            )}
+            {!isLoading && logs.length === 0 && !error && (
+                <div className="text-center py-8">
+                    <p className="text-gray-500">No workouts logged yet!</p>
+                    <p className="text-sm text-gray-400 mt-2">Start logging your workouts to see them here.</p>
+                </div>
+            )}
             <div className="space-y-3 max-h-[70vh] overflow-y-auto pr-2">
                 {logs.map(log => (
                     <div key={log.id} className="bg-gray-50 border border-gray-200 p-4 rounded-lg transition-all hover:shadow-md hover:border-blue-300">
